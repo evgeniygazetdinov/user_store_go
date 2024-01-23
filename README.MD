@@ -43,7 +43,7 @@ roadmap
 <br>
 1.complete crud [v]
 <br>
-2.replace to separated modeles etc mvt []
+2.replace to separated modeles etc mvt [V]
 <br>
 3.connect async []
 <br>
