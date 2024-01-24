@@ -16,10 +16,6 @@ const PORT = ":8081"
 
 var database *sql.DB
 
-func InitDb() {
-
-}
-
 func main() {
 	db, err := sql.Open("mysql", "docker:password@tcp(0.0.0.0:3306)/golang")
 
