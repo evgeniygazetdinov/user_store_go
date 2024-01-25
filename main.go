@@ -9,6 +9,8 @@ import (
 
 	"github.com/gorilla/mux"
 
+	sales "work_in_que/sales"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -22,6 +24,7 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+	sales.DoSomeThing()
 	database = db
 	defer db.Close()
 	router := mux.NewRouter()
@@ -30,6 +33,7 @@ func main() {
 	router.HandleFunc("/edit/{id:[0-9]+}", editPage).Methods("GET")
 	router.HandleFunc("/edit/{id:[0-9]+}", editHandler).Methods("POST")
 	router.HandleFunc("/delete/{id:[0-9]+}", DeleteHandler)
+	router.HandleFunc("/sales", sales.indexHandler)
 
 	http.Handle("/", router)
 

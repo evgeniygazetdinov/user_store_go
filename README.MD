@@ -51,4 +51,10 @@ roadmap
 <br>
 5.add features for store/buy/products maybe additional design database
 <br>
-6.think about server for serving project
+manage files for store
+<br>
+main page with goods
+<br>
+cart
+<br>
+calculator
