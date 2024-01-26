@@ -33,7 +33,7 @@ func main() {
 	router.HandleFunc("/edit/{id:[0-9]+}", editPage).Methods("GET")
 	router.HandleFunc("/edit/{id:[0-9]+}", editHandler).Methods("POST")
 	router.HandleFunc("/delete/{id:[0-9]+}", DeleteHandler)
-	router.HandleFunc("/sales", sales.indexHandler)
+	router.HandleFunc("/sales", sales.SalesindexHandler)
 
 	http.Handle("/", router)
 
