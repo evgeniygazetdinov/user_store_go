@@ -28,12 +28,12 @@ func main() {
 	database = db
 	defer db.Close()
 	router := mux.NewRouter()
-	router.HandleFunc("/", indexHandler)
-	router.HandleFunc("/create", addProduct)
-	router.HandleFunc("/edit/{id:[0-9]+}", editPage).Methods("GET")
-	router.HandleFunc("/edit/{id:[0-9]+}", editHandler).Methods("POST")
-	router.HandleFunc("/delete/{id:[0-9]+}", DeleteHandler)
-	router.HandleFunc("/sales", sales.SalesindexHandler)
+	router.HandleFunc("/", sales.IndexHandler)
+	router.HandleFunc("/create", sales.AddProduct)
+	router.HandleFunc("/edit/{id:[0-9]+}", sales.EditPage).Methods("GET")
+	router.HandleFunc("/edit/{id:[0-9]+}", sales.EditHandler).Methods("POST")
+	router.HandleFunc("/delete/{id:[0-9]+}", sales.DeleteHandler)
+	// router.HandleFunc("/sales", sales.SalesindexHandler)
 
 	http.Handle("/", router)
 
