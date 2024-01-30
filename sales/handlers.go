@@ -1,44 +1,30 @@
 package sales
 
 import (
-	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
+	"database/sql"
+
 	"github.com/gorilla/mux"
 )
 
-var database *sql.DB
+func DoConnection() *sql.DB {
 
-// func SalesindexHandler(w http.ResponseWriter, r *http.Request) {
-// 	//TODO fix db calling from here
-// 	// rows, err := database.Query("select * from golang.products")
-// 	// if err != nil {
-// 	// 	fmt.Println("error")
-// 	// }
-// 	// defer rows.Close()
-// 	// products := []Products{}
-// 	// for rows.Next() {
-// 	// 	p := Products{}
-// 	// 	err := rows.Scan(&p.Id, &p.Model, &p.Company, &p.Price)
-// 	// 	if err != nil {
-// 	// 		fmt.Println(err)
-// 	// 		continue
-// 	// 	}
-// 	// 	products = append(products, p)
-// 	// }
-// 	p := Products{}
-// 	tmpl, _ := template.ParseFiles("./sales/sales/templates/index.html")
-// 	tmpl.Execute(w, p)
-// 	// data := Products{}
-// 	// w.Header().Set("Content-Type", "application/json")
-// 	// w.WriteHeader(http.StatusCreated)
-// 	// json.NewEncoder(w).Encode(data)
-// }
+	db, err := sql.Open("mysql", "docker:password@tcp(0.0.0.0:3306)/golang")
+
+	if err != nil {
+		log.Println(err)
+	}
+	database := db
+	defer db.Close()
+	return database
+}
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	database := DoConnection()
 	rows, err := database.Query("select * from golang.products")
 	if err != nil {
 		fmt.Println("error")
@@ -50,11 +36,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		err := rows.Scan(&p.Id, &p.Model, &p.Company, &p.Price)
 		if err != nil {
 			fmt.Println(err)
-			continue
+			fmt.Println("here!!!!")
 		}
 		products = append(products, p)
 	}
-
 	tmpl, _ := template.ParseFiles("./sales/templates/index.html")
 	tmpl.Execute(w, products)
 
@@ -63,7 +48,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-
+	database := DoConnection()
 	_, err := database.Exec("delete from golang.products where id = ?", id)
 	if err != nil {
 		log.Println(err)
@@ -73,6 +58,7 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddProduct(w http.ResponseWriter, r *http.Request) {
+	database := DoConnection()
 	if r.Method == "POST" {
 		err := r.ParseForm()
 		if err != nil {
@@ -94,6 +80,7 @@ func AddProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditPage(w http.ResponseWriter, r *http.Request) {
+	database := DoConnection()
 	vars := mux.Vars(r)
 	id := vars["id"]
 	prod := Products{}
@@ -109,6 +96,7 @@ func EditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditHandler(w http.ResponseWriter, r *http.Request) {
+	database := DoConnection()
 	if r.Method == "POST" {
 		err := r.ParseForm()
 		if err != nil {
