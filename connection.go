@@ -13,6 +13,5 @@ func DoConnection() *sql.DB {
 		log.Println(err)
 	}
 	database = db
-	defer db.Close()
 	return database
 }
