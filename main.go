@@ -10,8 +10,6 @@ import (
 
 	sales "work_in_que/sales"
 
-	manage "work_in_que/manage"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -20,7 +18,6 @@ const PORT = ":8081"
 var database *sql.DB
 
 func main() {
-	manage.CreateFile()
 	router := mux.NewRouter()
 	router.HandleFunc("/", sales.IndexHandler)
 	router.HandleFunc("/create", sales.AddProduct)
