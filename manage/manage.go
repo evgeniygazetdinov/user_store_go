@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func CreateFile() {
@@ -52,4 +53,30 @@ func CreateFile() {
 		}
 
 	}
+}
+
+func RunServer() {
+	mydir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(mydir)
+	app := "docker-compose"
+
+	arg0 := "-f"
+	arg1 := "docker-compose.yml"
+	arg2 := "up -d"
+	arg3 := "db"
+
+	cmd := exec.Command(app, arg0, arg1, arg2, arg3)
+	stdout, err := cmd.Output()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	// Print the output
+	fmt.Println(string(stdout))
+
 }
