@@ -1,1 +1,1 @@
-go run main.go startapp mypackage
+go run main.go startapp reports

@@ -44,6 +44,10 @@ roadmap
 1.complete crud [v]
 <br>
 2.replace to separated modeles etc mvt [V]
+add aditional architechture(by example magazine for sales computers)
+make manage point of run[]
+ 
+
 <br>
 3.connect async []
 <br>

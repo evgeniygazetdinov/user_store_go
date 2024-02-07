@@ -36,7 +36,7 @@ func CreateFile() {
 
 		fmt.Println(currDir)
 		myPackage := []byte("package " + packageName)
-		x := []string{"handlers.go", "models.go", "views.go"}
+		x := []string{"handlers.go", "models.go", "services.go"}
 		for i := 0; i < len(x); i++ {
 			fmt.Printf("%x ", x[i])
 			f, err := os.Create(x[i])
@@ -51,6 +51,7 @@ func CreateFile() {
 				defer f.Close()
 			}
 		}
+		os.MkdirAll("templates", os.ModePerm)
 
 	}
 }
@@ -79,4 +80,32 @@ func RunServer() {
 	// Print the output
 	fmt.Println(string(stdout))
 
+}
+
+func RunServer2() {
+	mydir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(mydir)
+	app := "go "
+
+	arg0 := "run"
+	arg1 := "main.go"
+
+	cmd := exec.Command(app, arg0, arg1)
+	stdout, err := cmd.Output()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	// Print the output
+	fmt.Println(string(stdout))
+
+}
+
+func main() {
+	RunServer2()
 }
