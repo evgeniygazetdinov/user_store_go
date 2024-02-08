@@ -7,7 +7,10 @@ import (
 	"os/exec"
 )
 
+var no bool
+
 func CreateFile() {
+
 	if os.Args[1] == "startapp" && len(os.Args) > 2 && os.Args[2] != "" {
 
 		packageName := os.Args[2]
@@ -52,7 +55,9 @@ func CreateFile() {
 			}
 		}
 		os.MkdirAll("templates", os.ModePerm)
-
+		no = true
+	} else {
+		no = true
 	}
 }
 

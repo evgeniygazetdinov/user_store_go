@@ -1,1 +1,1 @@
-go run main.go startapp reports
+go run main.go 
