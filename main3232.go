@@ -45,8 +45,3 @@ func handleRequest() {
 
 	http.ListenAndServe(PORT, nil)
 }
-
-// func main() {
-// 	dbConnect()
-// 	handleRequest()
-// }
