@@ -12,7 +12,7 @@ import (
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// products := MainService()
-	products := []Products{}
+	products := MainService()
 	tmpl, _ := template.ParseFiles("./sales/templates/index.html")
 	tmpl.Execute(w, products)
 
@@ -20,18 +20,12 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
-	database := DoConnection()
-	_, err := database.Exec("delete from golang.products where id = ?", id)
-	if err != nil {
-		log.Println(err)
-	}
-
+	idOFProduct := vars["id"]
+	DeleteService(idOFProduct)
 	http.Redirect(w, r, "/", 301)
 }
 
 func AddProduct(w http.ResponseWriter, r *http.Request) {
-	database := DoConnection()
 	if r.Method == "POST" {
 		err := r.ParseForm()
 		if err != nil {
@@ -41,11 +35,7 @@ func AddProduct(w http.ResponseWriter, r *http.Request) {
 		company := r.FormValue("company")
 		price := r.FormValue("price")
 
-		_, err = database.Exec("insert into golang.products(model, company, price) values (?, ?,?)", model, company, price)
-
-		if err != nil {
-			log.Println(err)
-		}
+		AddService(model, company, price)
 		http.Redirect(w, r, "/", 301)
 	} else {
 		http.ServeFile(w, r, "/sales/templates/create.html")

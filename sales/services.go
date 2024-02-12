@@ -39,3 +39,20 @@ func MainService() []Products {
 	}
 	return products
 }
+
+func DeleteService(idOFProduct string) {
+	database := DoConnection()
+	_, err := database.Exec("delete from golang.products where id = ?", idOFProduct)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func AddService(model string, company string, price string) {
+	database := DoConnection()
+	_, err = database.Exec("insert into golang.products(model, company, price) values (?, ?,?)", model, company, price)
+
+	if err != nil {
+		log.Println(err)
+	}
+}
