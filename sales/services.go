@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-// 	"github.com/gorilla/mux"
-// )
 func DoConnection() *sql.DB {
 
 	db, err := sql.Open("mysql", "docker:password@tcp(0.0.0.0:3306)/golang")
@@ -31,7 +29,6 @@ func MainService() []Products {
 		p := Products{}
 		err := rows.Scan(&p.Id, &p.Model, &p.Company, &p.Price)
 		if err != nil {
-			fmt.Println("here!!!!")
 			fmt.Println(err)
 
 		}
@@ -40,7 +37,7 @@ func MainService() []Products {
 	return products
 }
 
-func DeleteService(idOFProduct string) {
+func DeleteProductService(idOFProduct string) {
 	database := DoConnection()
 	_, err := database.Exec("delete from golang.products where id = ?", idOFProduct)
 	if err != nil {
@@ -48,11 +45,21 @@ func DeleteService(idOFProduct string) {
 	}
 }
 
-func AddService(model string, company string, price string) {
+func AddProductService(model string, company string, price string) {
 	database := DoConnection()
-	_, err = database.Exec("insert into golang.products(model, company, price) values (?, ?,?)", model, company, price)
+	database.Exec("insert into golang.products(model, company, price) values (?, ?,?)", model, company, price)
+}
 
-	if err != nil {
-		log.Println(err)
-	}
+func EditProductService(id string) (Products, error) {
+	database := DoConnection()
+	products := Products{}
+	row := database.QueryRow("select * from golang.products where id = ?", id)
+	err := row.Scan(&products.Id, &products.Model, &products.Company, &products.Price)
+	return products, err
+}
+
+func EditProductSpecitcService(id string, model string, company string, price string) error {
+	database := DoConnection()
+	_, err := database.Exec("update golang.products set model = ?, company = ?, price = ? where id = ?", model, company, price, id)
+	return err
 }
