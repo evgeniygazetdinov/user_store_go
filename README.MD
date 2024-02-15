@@ -28,6 +28,19 @@ CREATE TABLE golang.products (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8
 COLLATE=utf8_general_ci;
+<br>
+CREATE TABLE golang.reports (
+	name VARCHAR(100) NULL,
+	`rows` INT NULL,
+	`columns` INT NULL,
+	query TEXT NULL,
+	id INT auto_increment NOT NULL,
+	CONSTRAINT reports_pk PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci;
+<br>
 
 
 <br>
@@ -36,6 +49,11 @@ values ('iPhone X', 'Apple', 74000),
 ('Pixel 2', 'Google', 62000),
 ('Galaxy S9', 'Samsung', 65000)
 
+<br>
+<br>
+INSERT INTO golang.reports
+(name, `rows`, `columns`, query, id)
+VALUES('base_report', 2, 3, 'select * from products', 1);
 <br>
 ===================================
 <br>

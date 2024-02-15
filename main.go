@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	reports "work_in_que/reports"
 	sales "work_in_que/sales"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -24,6 +25,7 @@ func main() {
 	router.HandleFunc("/edit/{id:[0-9]+}", sales.EditPage).Methods("GET")
 	router.HandleFunc("/edit/{id:[0-9]+}", sales.EditHandler).Methods("POST")
 	router.HandleFunc("/delete/{id:[0-9]+}", sales.DeleteHandler)
+	router.HandleFunc("/reports/index/", reports.ReportsMainHandler).Methods("GET")
 
 	http.Handle("/", router)
 
