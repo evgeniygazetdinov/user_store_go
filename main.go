@@ -30,5 +30,6 @@ func main() {
 	http.Handle("/", router)
 
 	fmt.Printf("Running on %s \n", PORT)
+	fmt.Println("http://0.0.0.0:" + PORT)
 	http.ListenAndServe(PORT, nil)
 }

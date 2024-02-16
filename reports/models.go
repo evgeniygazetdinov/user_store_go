@@ -7,5 +7,3 @@ type Report struct {
 	Columns int
 	Query   string
 }
-
-// add into base queries that struct
