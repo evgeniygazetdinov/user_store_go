@@ -63,11 +63,11 @@ roadmap
 <br>
 2.replace to separated modeles etc mvt [V]
 add aditional architechture(by example magazine for sales computers)
-make manage point of run[]
+make manage point of run[V]
  
 
 <br>
-3.connect async []
+3.connect async [] in progress
 <br>
 4.finish frontend stuff(connect bootstrap, sorting columns, total)
 <br>

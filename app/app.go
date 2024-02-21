@@ -29,4 +29,14 @@ func HanlerConnections() {
 	fmt.Printf("Running on %s \n", PORT)
 	fmt.Println("http://0.0.0.0:" + PORT)
 	http.ListenAndServe(PORT, nil)
+
+	// server := server.Init(":0")
+
+	// if err := server.Start(); err != nil {
+	// 	panic(err)
+	// }
+
+	// // ...do stuff here...
+
+	// server.Stop()
 }
