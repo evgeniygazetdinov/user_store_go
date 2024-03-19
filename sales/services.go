@@ -1,20 +1,41 @@
 package sales
 
 import (
-	"database/sql"
+	"context"
+	// "database/sql"
 	"fmt"
 	"log"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func DoConnection() *sql.DB {
+func DoConnection() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 
-	db, err := sql.Open("mysql", "docker:password@tcp(0.0.0.0:3306)/golang")
+	mongoClient, err := mongo.Connect(
+		ctx,
+		options.Client().ApplyURI("mongodb://michael:secret@localhost:27017/"),
+	)
+
+	defer func() {
+		cancel()
+		if err := mongoClient.Disconnect(ctx); err != nil {
+			log.Fatalf("mongodb disconnect error : %v", err)
+		}
+	}()
 
 	if err != nil {
-		log.Println(err)
+		log.Fatalf("connection error :%v", err)
+
 	}
-	database := db
-	return database
+
+	err = mongoClient.Ping(ctx, readpref.Primary())
+	if err != nil {
+		log.Fatalf("ping mongodb error :%v", err)
+	}
 }
 
 func MainService() []Products {

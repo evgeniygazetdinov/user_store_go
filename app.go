@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	reports "work_in_que/app/reports"
-	sales "work_in_que/app/sales"
+	reports "work_in_que/reports"
+	sales "work_in_que/sales"
 
 	_ "github.com/go-sql-driver/mysql"
 )

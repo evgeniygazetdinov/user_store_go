@@ -65,18 +65,5 @@ roadmap
 add aditional architechture(by example magazine for sales computers)
 make manage point of run[V]
  
-
-<br>
-3.connect async [] in progress
-<br>
-4.finish frontend stuff(connect bootstrap, sorting columns, total)
-<br>
-5.add features for store/buy/products maybe additional design database
-<br>
-manage files for store
-<br>
-main page with goods
-<br>
-cart
-<br>
-calculator
+3. connect mongo db
+4. make base user with chat and messages
