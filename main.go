@@ -2,79 +2,77 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
+	"reflect"
 
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var client *mongo.Client
-var collection *mongo.Collection
 
-type Event struct {
-	ID          string `json:"ID,omitempty" bson:"ID,omitempty"`
-	Title       string `json:"Title,omitempty" bson:"Title,omitempty"`
-	Description string `json:"Description,omitempty" bson:"Description,omitempty"`
+type User struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-type EventUpdate struct {
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
+type Book struct {
+	Title  string
+	Author string
 }
 
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
+func getUsers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Get all users")
 }
 
-func CreateEvent(response http.ResponseWriter, request *http.Request) {
-	fmt.Println("Starting CreateEvent Function...")
-	response.Header().Set("content-type", "application/json")
-	var newEvent Event
-	err := json.NewDecoder(request.Body).Decode(&newEvent)
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
-		return
-	}
-	insertResult, err := collection.InsertOne(context.TODO(), newEvent)
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
-		return
-	}
-	json.NewEncoder(response).Encode(insertResult)
+func getUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Get a user")
 }
 
-func GetAllEvents(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("content-type", "application/json")
-	var events []Event
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
-		return
-	}
-	if err = cursor.All(ctx, &events); err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
-		return
-	}
-	json.NewEncoder(response).Encode(events)
+func createUser(w http.ResponseWriter, r *http.Request) {
+
+	col := client.Database("some_database").Collection("Some Collection")
+
+	fmt.Println("Collection type:", reflect.TypeOf(col))
+
+	// doc := Book{Title: "Atonement", Author: "Ian McEwan"}
+	// result, err := coll.InsertOne(context.TODO(), doc)
+	// fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
+	// fmt.Println(err)
+
+}
+
+func updateUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Update a user")
+}
+
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Delete a user")
 }
 
 func main() {
-	port := ":9090"
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/c", CreateEvent)
-	router.HandleFunc("/a", GetAllEvents)
-	fmt.Println("running on http://0.0.0.0" + port)
-	log.Fatal(http.ListenAndServe(port, router))
+	clientOptions := options.Client().ApplyURI("mongodb://0.0.0.0:27017/?timeoutMS=5000")
+	client, err := mongo.Connect(context.Background(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.Ping(context.Background(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	fmt.Println("Connected to MongoDB!")
+	defer client.Disconnect(context.Background())
+
+	http.HandleFunc("/users", getUsers)
+	http.HandleFunc("/users/", getUser)
+	http.HandleFunc("/users/create/", createUser)
+	http.HandleFunc("/users/update/", updateUser)
+	http.HandleFunc("/users/delete/", deleteUser)
+
+	http.ListenAndServe(":8080", nil)
 }
