@@ -3,76 +3,81 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
-	"reflect"
+	"work_in_que/auth"
+	"work_in_que/cars"
+	"work_in_que/health"
+	"work_in_que/logging"
+	"work_in_que/middleware"
+	"work_in_que/user"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	//"strings"
+	// "time"
+
+	"work_in_que/db"
+
+	"github.com/gin-gonic/gin"
+
+	// "github.com/gin-contrib/cors"
+	// "database/sql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-var client *mongo.Client
-
-type User struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type Book struct {
-	Title  string
-	Author string
-}
-
-func getUsers(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Get all users")
-}
-
-func getUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Get a user")
-}
-
-func createUser(w http.ResponseWriter, r *http.Request) {
-
-	col := client.Database("some_database").Collection("Some Collection")
-
-	fmt.Println("Collection type:", reflect.TypeOf(col))
-
-	// doc := Book{Title: "Atonement", Author: "Ian McEwan"}
-	// result, err := coll.InsertOne(context.TODO(), doc)
-	// fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
-	// fmt.Println(err)
-
-}
-
-func updateUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Update a user")
-}
-
-func deleteUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Delete a user")
-}
-
 func main() {
-	clientOptions := options.Client().ApplyURI("mongodb://0.0.0.0:27017/?timeoutMS=5000")
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	fmt.Println("Starting...")
+	logger := logging.NewLogger()
+
+	// env.VerifyRequiredEnvVarsSet()
+
+	dbName := "mydb"
+	client, err := db.CreateDatabaseConnection(dbName)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Failed to connect to DB")
+		panic(err)
 	}
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		log.Fatal(err)
+	defer client.Disconnect(context.TODO())
+
+	db := client.Database(dbName)
+
+	// Repositories
+	userRepository := user.NewInstanceOfUserRepository(db)
+	carsRepository := cars.NewInstanceOfCarsRepository(db)
+	forgotPasswordRepository := user.NewInstanceOfForgotPasswordRepository(db)
+
+	// Services
+	userServices := user.NewInstanceOfUserServices(logger, userRepository, forgotPasswordRepository)
+	carsServices := cars.NewInstanceOfCarsServices(logger, userRepository, carsRepository)
+
+	// Handlers
+	userHandlers := user.NewInstanceOfUserHandlers(logger, userServices)
+	carsHandlers := cars.NewInstanceOfCarsHandlers(logger, carsServices)
+
+	router := gin.Default()
+	router.Use(middleware.CORSMiddleware())
+
+	healthAPI := router.Group("/")
+	{
+		healthAPI.GET("", health.Check)
+		healthAPI.GET("health", health.Check)
 	}
 
-	fmt.Println("Connected to MongoDB!")
-	defer client.Disconnect(context.Background())
+	userAPI := router.Group("/user")
+	{
+		userAPI.POST("/signin", userHandlers.SignIn)
+		userAPI.GET("/signup", userHandlers.SignUp)
+		userAPI.POST("/signout", auth.ValidateAuth(userRepository), userHandlers.LogOut)
+		userAPI.POST("/session/unlock", userHandlers.UnlockSession)
+		userAPI.POST("/forgot-password/", userHandlers.SendForgotPassword)
+		userAPI.POST("/forgot-password/reset", userHandlers.ForgotPassword)
+	}
 
-	http.HandleFunc("/users", getUsers)
-	http.HandleFunc("/users/", getUser)
-	http.HandleFunc("/users/create/", createUser)
-	http.HandleFunc("/users/update/", updateUser)
-	http.HandleFunc("/users/delete/", deleteUser)
+	carsAPI := router.Group("/cars")
+	{
+		carsAPI.GET("/", auth.ValidateAuth(userRepository), carsHandlers.GetAll)
+		carsAPI.GET("/:id", auth.ValidateAuth(userRepository), carsHandlers.GetByID)
+		carsAPI.POST("/", auth.ValidateAuth(userRepository), carsHandlers.Create)
+		carsAPI.PUT("/:id", auth.ValidateAuth(userRepository), carsHandlers.Update)
+		carsAPI.DELETE("/:id", auth.ValidateAuth(userRepository), carsHandlers.Delete)
+	}
 
-	http.ListenAndServe(":8080", nil)
+	router.Run(":8080")
 }
