@@ -1,4 +1,4 @@
-package cars
+package chats
 
 import (
 	"context"
@@ -12,29 +12,29 @@ import (
 )
 
 type Services struct {
-	logger         logging.Logger
-	userRepository user.Repository
-	carsRepository Repository
+	logger          logging.Logger
+	userRepository  user.Repository
+	chatsRepository Repository
 }
 
-func NewInstanceOfCarsServices(logger logging.Logger, userRepository user.Repository, carsRepository Repository) Services {
-	return Services{logger, userRepository, carsRepository}
+func NewInstanceOfchatsServices(logger logging.Logger, userRepository user.Repository, chatsRepository Repository) Services {
+	return Services{logger, userRepository, chatsRepository}
 }
 
 func (c *Services) GetAll(ctx context.Context, session user.Session, query ListCarQuery) ([]Car, error) {
 	ctx = context.WithValue(ctx, logging.CtxServiceMethod, "GetAll")
 
-	cars, err := c.carsRepository.List(session.Email, query)
+	chats, err := c.chatsRepository.List(session.Email, query)
 	if err != nil {
 		return []Car{}, err
 	}
-	return cars, nil
+	return chats, nil
 }
 
 func (c *Services) GetByID(ctx context.Context, session user.Session, carID string) (Car, error) {
 	ctx = context.WithValue(ctx, logging.CtxServiceMethod, "GetByID")
 
-	car, err := c.carsRepository.Get(session.Email, carID)
+	car, err := c.chatsRepository.Get(session.Email, carID)
 	if err != nil {
 		return Car{}, err
 	}
@@ -52,7 +52,7 @@ func (c *Services) Create(ctx context.Context, session user.Session, body Create
 		Created: time.Now(),
 		Email:   session.Email,
 	}
-	err := c.carsRepository.Save(car)
+	err := c.chatsRepository.Save(car)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (c *Services) Create(ctx context.Context, session user.Session, body Create
 func (c *Services) Update(ctx context.Context, session user.Session, carID string, body UpdateCar) error {
 	ctx = context.WithValue(ctx, logging.CtxServiceMethod, "Update")
 	// Update car
-	err := c.carsRepository.Update(session.Email, carID, body)
+	err := c.chatsRepository.Update(session.Email, carID, body)
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (c *Services) Delete(ctx context.Context, session user.Session, carID strin
 	ctx = context.WithValue(ctx, logging.CtxServiceMethod, "Delete")
 
 	// Delete car
-	err := c.carsRepository.Delete(session.Email, carID)
+	err := c.chatsRepository.Delete(session.Email, carID)
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"work_in_que/auth"
-	"work_in_que/cars"
+	chats "work_in_que/chats"
 	"work_in_que/health"
 	"work_in_que/logging"
 	"work_in_que/middleware"
@@ -40,16 +40,16 @@ func main() {
 
 	// Repositories
 	userRepository := user.NewInstanceOfUserRepository(db)
-	carsRepository := cars.NewInstanceOfCarsRepository(db)
+	chatsRepository := chats.NewInstanceOfchatsRepository(db)
 	forgotPasswordRepository := user.NewInstanceOfForgotPasswordRepository(db)
 
 	// Services
 	userServices := user.NewInstanceOfUserServices(logger, userRepository, forgotPasswordRepository)
-	carsServices := cars.NewInstanceOfCarsServices(logger, userRepository, carsRepository)
+	chatsServices := chats.NewInstanceOfchatsServices(logger, userRepository, chatsRepository)
 
 	// Handlers
 	userHandlers := user.NewInstanceOfUserHandlers(logger, userServices)
-	carsHandlers := cars.NewInstanceOfCarsHandlers(logger, carsServices)
+	chatsHandlers := chats.NewInstanceOfchatsHandlers(logger, chatsServices)
 
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
@@ -70,13 +70,13 @@ func main() {
 		userAPI.POST("/forgot-password/reset", userHandlers.ForgotPassword)
 	}
 
-	carsAPI := router.Group("/cars")
+	chatsAPI := router.Group("/chats")
 	{
-		carsAPI.GET("/", auth.ValidateAuth(userRepository), carsHandlers.GetAll)
-		carsAPI.GET("/:id", auth.ValidateAuth(userRepository), carsHandlers.GetByID)
-		carsAPI.POST("/", auth.ValidateAuth(userRepository), carsHandlers.Create)
-		carsAPI.PUT("/:id", auth.ValidateAuth(userRepository), carsHandlers.Update)
-		carsAPI.DELETE("/:id", auth.ValidateAuth(userRepository), carsHandlers.Delete)
+		chatsAPI.GET("/", auth.ValidateAuth(userRepository), chatsHandlers.GetAll)
+		chatsAPI.GET("/:id", auth.ValidateAuth(userRepository), chatsHandlers.GetByID)
+		chatsAPI.POST("/", auth.ValidateAuth(userRepository), chatsHandlers.Create)
+		chatsAPI.PUT("/:id", auth.ValidateAuth(userRepository), chatsHandlers.Update)
+		chatsAPI.DELETE("/:id", auth.ValidateAuth(userRepository), chatsHandlers.Delete)
 	}
 
 	router.Run(":8080")

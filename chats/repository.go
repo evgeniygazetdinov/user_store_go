@@ -1,4 +1,4 @@
-package cars
+package chats
 
 import (
 	"context"
@@ -16,13 +16,13 @@ type Repository struct {
 	collectionName string
 }
 
-func NewInstanceOfCarsRepository(db *mongo.Database) Repository {
-	return Repository{db: db, collectionName: "cars"}
+func NewInstanceOfchatsRepository(db *mongo.Database) Repository {
+	return Repository{db: db, collectionName: "chats"}
 }
 
 func (c *Repository) List(email string, query ListCarQuery) ([]Car, error) {
 	filters := query.Filter(email)
-	var cars []Car
+	var chats []Car
 
 	options := options.Find()
 
@@ -44,10 +44,10 @@ func (c *Repository) List(email string, query ListCarQuery) ([]Car, error) {
 		if err != nil {
 			//handle err
 		} else {
-			cars = append(cars, car)
+			chats = append(chats, car)
 		}
 	}
-	return cars, nil
+	return chats, nil
 }
 
 func (c *Repository) Get(email string, carID string) (Car, error) {

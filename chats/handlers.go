@@ -1,4 +1,4 @@
-package cars
+package chats
 
 import (
 	"context"
@@ -14,12 +14,12 @@ import (
 )
 
 type Handlers struct {
-	logger      logging.Logger
-	carsService Services
+	logger       logging.Logger
+	chatsService Services
 }
 
-func NewInstanceOfCarsHandlers(logger logging.Logger, carsService Services) *Handlers {
-	return &Handlers{logger, carsService}
+func NewInstanceOfchatsHandlers(logger logging.Logger, chatsService Services) *Handlers {
+	return &Handlers{logger, chatsService}
 }
 
 func (u *Handlers) GetSession(c *gin.Context) (user.Session, bool) {
@@ -36,7 +36,7 @@ func (u *Handlers) GetSession(c *gin.Context) (user.Session, bool) {
 
 func (u *Handlers) GetAll(c *gin.Context) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, logging.CtxDomain, "Cars")
+	ctx = context.WithValue(ctx, logging.CtxDomain, "chats")
 	ctx = context.WithValue(ctx, logging.CtxHandlerMethod, "GetAll")
 	ctx = context.WithValue(ctx, logging.CtxRequestID, uuid.New().String())
 
@@ -87,25 +87,25 @@ func (u *Handlers) GetAll(c *gin.Context) {
 		return
 	}
 
-	cars, err := u.carsService.GetAll(ctx, session, query)
+	chats, err := u.chatsService.GetAll(ctx, session, query)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
-	if cars == nil {
-		cars = []Car{}
+	if chats == nil {
+		chats = []Car{}
 	}
-	c.JSON(200, gin.H{"message": "Cars retrieved", "cars": cars})
+	c.JSON(200, gin.H{"message": "chats retrieved", "chats": chats})
 	return
 }
 
 func (u *Handlers) GetByID(c *gin.Context) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, logging.CtxDomain, "Cars")
+	ctx = context.WithValue(ctx, logging.CtxDomain, "chats")
 	ctx = context.WithValue(ctx, logging.CtxHandlerMethod, "GetByID")
 	ctx = context.WithValue(ctx, logging.CtxRequestID, uuid.New().String())
 
-	carsID := c.Param("id")
+	chatsID := c.Param("id")
 
 	session, exists := u.GetSession(c)
 	if !exists {
@@ -113,7 +113,7 @@ func (u *Handlers) GetByID(c *gin.Context) {
 		return
 	}
 
-	car, err := u.carsService.GetByID(ctx, session, carsID)
+	car, err := u.chatsService.GetByID(ctx, session, chatsID)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
@@ -124,7 +124,7 @@ func (u *Handlers) GetByID(c *gin.Context) {
 
 func (u *Handlers) Create(c *gin.Context) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, logging.CtxDomain, "Cars")
+	ctx = context.WithValue(ctx, logging.CtxDomain, "chats")
 	ctx = context.WithValue(ctx, logging.CtxHandlerMethod, "Create")
 	ctx = context.WithValue(ctx, logging.CtxRequestID, uuid.New().String())
 
@@ -151,7 +151,7 @@ func (u *Handlers) Create(c *gin.Context) {
 		return
 	}
 
-	err := u.carsService.Create(ctx, session, body)
+	err := u.chatsService.Create(ctx, session, body)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
@@ -162,11 +162,11 @@ func (u *Handlers) Create(c *gin.Context) {
 
 func (u *Handlers) Update(c *gin.Context) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, logging.CtxDomain, "Cars")
+	ctx = context.WithValue(ctx, logging.CtxDomain, "chats")
 	ctx = context.WithValue(ctx, logging.CtxHandlerMethod, "Update")
 	ctx = context.WithValue(ctx, logging.CtxRequestID, uuid.New().String())
 
-	carsID := c.Param("id")
+	chatsID := c.Param("id")
 
 	var body UpdateCar
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -191,7 +191,7 @@ func (u *Handlers) Update(c *gin.Context) {
 		return
 	}
 
-	err := u.carsService.Update(ctx, session, carsID, body)
+	err := u.chatsService.Update(ctx, session, chatsID, body)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return
@@ -202,7 +202,7 @@ func (u *Handlers) Update(c *gin.Context) {
 
 func (u *Handlers) Delete(c *gin.Context) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, logging.CtxDomain, "Cars")
+	ctx = context.WithValue(ctx, logging.CtxDomain, "chats")
 	ctx = context.WithValue(ctx, logging.CtxHandlerMethod, "Delete")
 	ctx = context.WithValue(ctx, logging.CtxRequestID, uuid.New().String())
 
@@ -212,9 +212,9 @@ func (u *Handlers) Delete(c *gin.Context) {
 		return
 	}
 
-	carsID := c.Param("id")
+	chatsID := c.Param("id")
 
-	err := u.carsService.Delete(ctx, session, carsID)
+	err := u.chatsService.Delete(ctx, session, chatsID)
 	if err != nil {
 		c.JSON(400, gin.H{"message": err.Error()})
 		return

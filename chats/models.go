@@ -1,10 +1,11 @@
-package cars
+package chats
 
 import (
 	"errors"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type Car struct {
