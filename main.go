@@ -10,15 +10,12 @@ import (
 	"work_in_que/middleware"
 	"work_in_que/user"
 
-	//"strings"
-	// "time"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"work_in_que/db"
 
 	"github.com/gin-gonic/gin"
-
-	// "github.com/gin-contrib/cors"
-	// "database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -78,6 +75,6 @@ func main() {
 		chatsAPI.PUT("/:id", auth.ValidateAuth(userRepository), chatsHandlers.Update)
 		chatsAPI.DELETE("/:id", auth.ValidateAuth(userRepository), chatsHandlers.Delete)
 	}
-
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run(":8080")
 }

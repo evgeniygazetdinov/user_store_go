@@ -43,7 +43,6 @@ func (c *Services) GetByID(ctx context.Context, session user.Session, carID stri
 
 func (c *Services) Create(ctx context.Context, session user.Session, body CreateCar) error {
 	ctx = context.WithValue(ctx, logging.CtxServiceMethod, "Create")
-	// Create new car object
 	car := Car{
 		Make:    body.Make,
 		Model:   body.Model,
