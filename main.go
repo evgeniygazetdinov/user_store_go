@@ -15,6 +15,8 @@ import (
 
 	"work_in_que/db"
 
+	_ "work_in_que/docs"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -76,5 +78,9 @@ func main() {
 		chatsAPI.DELETE("/:id", auth.ValidateAuth(userRepository), chatsHandlers.Delete)
 	}
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Run(":8080")
+	router.Run("0.0.0.0:8080")
+
+	// SwaggerInfo["Title"] = "Chat Service API"
+	// SwaggerInfo["Description"] = "Chat service"
+
 }
