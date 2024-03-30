@@ -9,13 +9,14 @@ import (
 )
 
 type Car struct {
-	ID      primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Make    string             `json:"make",bson:"make"`
-	Model   string             `json:"model",bson:"model"`
-	Year    int                `json:"year",bson:"year"`
-	Status  string             `json:"status",bson:"status"`
-	Email   string             `json:"email",bson:"email"`
-	Created time.Time          `json:"created",bson:"created"`
+	ID               primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	created_at       time.Time          `json:"created_at",bson:"created_at"`
+	user_ids         string             `json:"user_ids",bson:"user_ids"`
+	updated_at       time.Time          `json:"updated_at",bson:"updated_at"`
+	is_system        bool               `json:"is_system",bson:"is_system"`
+	is_visited_users string             `json:"is_visited_users",bson:"is_visited_users"`
+	is_pure          bool               `json:"is_pure",bson:"is_pure"`
+	is_active        bool               `json:"is_active",bson:"is_active"`
 }
 
 type ListCarQuery struct {
